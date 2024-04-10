@@ -1,0 +1,40 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>org.sremy.folderPlugin</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>FolderPlugin</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="support@yourcompany.com" url="https://www.yourcompany.com">YourCompany</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description>Plugin that creates a template of folders with one click</description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="Subfolders created"
+                           displayType="BALLOON" />
+    </extensions>
+    <actions>
+        <group id="createFoldersGroup" text="Create Sub-Folders From Template" popup="true" >
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="WeighingNewGroup"/>
+            <action id="createCucumberFolders" class="org.sremy.folderPlugin.CreateCucumberFolderAction" text="My Cucumber Sub-Folders" />
+            <action id="createMavenFolders" class="org.sremy.folderPlugin.CreateMavenFolderAction" text="Maven Sub-Folders src/main/java..."/>
+        </group>
+
+        <action id="createCucumberFolders2" class="org.sremy.folderPlugin.CreateCucumberFolderAction" text="Create My Cucumber Sub-Folders">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="createFoldersGroup"/>
+        </action>
+    </actions>
+</idea-plugin>
