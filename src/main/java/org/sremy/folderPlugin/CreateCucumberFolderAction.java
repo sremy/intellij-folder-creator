@@ -13,17 +13,10 @@ public class CreateCucumberFolderAction extends CreateFolderAction {
     }
 
     @Override
-    protected void doActionInFolder(List<Path> selectedFolder) {
+    protected void doActionInFolder(List<Path> selectedFolder) throws IOException {
         // Create a feature file in root folder
-        selectedFolder.forEach(rootFolder -> {
-            try {
-                Files.createFile(rootFolder.resolve("cucumber.feature"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
+        for (Path rootFolder : selectedFolder) {
+            Files.createFile(rootFolder.resolve("cucumber.feature"));
+        }
     }
-
-
 }

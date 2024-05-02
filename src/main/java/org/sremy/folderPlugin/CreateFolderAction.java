@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public abstract class CreateFolderAction extends AnAction {
 
-    private static Collection<String> subfolderNames;
+    private final Collection<String> subfolderNames;
 
     public CreateFolderAction() {
         subfolderNames = getListOfSubFolders();
@@ -53,14 +53,18 @@ public abstract class CreateFolderAction extends AnAction {
         System.out.println(relativeProjectPath);
 
         try {
-            folderPathList.forEach(CreateFolderAction::createTemplateVirtualFolders);
+            folderPathList.forEach(this::createTemplateVirtualFolders);
             Arrays.stream(virtualFiles).forEach(vf -> vf.refresh(true, true));
         } catch (Exception ex) {
-            showMessageWarning(project, "Exception during the creation of the sub-folders: " + ex.getMessage());
+            showMessageWarning(project, "Exception during the creation of the sub-folders: " + ex);
             return;
         }
 
-        doActionInFolder(folderPathList);
+        try {
+            doActionInFolder(folderPathList);
+        } catch (Exception ex) {
+            showMessageWarning(project, "Exception during the action on the folder: " + ex);
+        }
 
         NotificationGroupManager.getInstance()
                 .getNotificationGroup("Subfolders created")
@@ -70,12 +74,12 @@ public abstract class CreateFolderAction extends AnAction {
 
     }
 
-    protected void doActionInFolder(List<Path> selectedFolders) {
-
+    protected void doActionInFolder(List<Path> selectedFolders) throws Exception {
+        // Implement it in subclass
     }
 
     // IntelliJ VFS API
-    private static void createTemplateVirtualFolders(Path path) {
+    private void createTemplateVirtualFolders(Path path) {
         subfolderNames.forEach(name -> {
             try {
                 VfsUtil.createDirectories(path.resolve(name).toAbsolutePath().toString());
