@@ -1,5 +1,6 @@
 package org.sremy.folderPlugin;
 
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -10,6 +11,7 @@ import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -71,7 +73,26 @@ public abstract class CreateFolderAction extends AnAction {
                 .createNotification("Subfolders created in " + relativeProjectPath, NotificationType.INFORMATION)
                 .notify(project);
 
+//        printVariablesInEachMethod(e);
+    }
 
+    private static void printVariablesInEachMethod(AnActionEvent e) {
+        // PSI File
+        PsiFile psiFile = e.getData(PlatformDataKeys.PSI_FILE);
+
+        if (psiFile != null && psiFile.getFileType().equals(JavaFileType.INSTANCE)) {
+            PsiJavaFile psiJavaFile = (PsiJavaFile) psiFile;
+            PsiMethod[] methods = psiJavaFile.getClasses()[0].getMethods();
+
+            Arrays.stream(methods).forEach(m -> m.accept(new JavaRecursiveElementVisitor() {
+                @Override
+                public void visitLocalVariable(@NotNull PsiLocalVariable variable) {
+                    super.visitLocalVariable(variable);
+                    System.out.println("In method " + m.getName() + ", Found a variable " + variable.getName() + " type: " + variable.getType().getCanonicalText() +  " at offset " +
+                            variable.getTextRange().getStartOffset());
+                }
+            }));
+        }
     }
 
     protected void doActionInFolder(List<Path> selectedFolders) throws Exception {
